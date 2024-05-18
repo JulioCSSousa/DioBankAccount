@@ -1,13 +1,13 @@
 from time import sleep
 balance = 0
 LIMIT_WITHDRAW: float = 500
-limit_withdraw_count: int = 3
-
+limit_withdraw_count: int = 2
 end: bool = False
 choose: int = 0
 users = list()
 statement = list()
 account_num: int = 1
+
 def screen():
     print("\033[0;32m [0] - Finish\033[m")
     print("\033[0;32m [1] - Withdraw\033[m")
@@ -37,7 +37,7 @@ def withdraw_validations(amount, balance, limit_withdraw, limit_withdraw_count):
         return "\033[0;31m Invalid Operation \033[m"
     elif amount >= limit_withdraw:
         return F"\033[0;31m You can't withdraw more than your limit \033[m {limit_withdraw}"
-    elif limit_withdraw_count == 0:
+    elif limit_withdraw_count < 0:
         return f"\033[0;31m You cannot make more withdraw today, you exceeded your limit \033[m "
     elif balance < amount:
         return f"\033[0;31m Not enough cash! \033[m "
@@ -53,8 +53,9 @@ def statement_display():
         if "Withdraw" in item.keys():
             print(f"\033[0;31m -R$", item["Withdraw"], "\033[m")
 def user_create(name, birthdate, cpf, street, num, district, city, state):
-    users.append({cpf: {"Name": name, "Birthdate":birthdate,
-                "Address": {"Street": street, "Num": num, "District": district, "City": city, "State": state}}})
+    new = {cpf: {"Name": name, "Birthdate":birthdate, "Address": {"Street": street, "Num": num, "District": district, "City": city, "State": state},
+     "Accounts" : []}}
+    users.append(new)
 def create_user_validation(cpf):
     for item in users:
         if cpf in item.keys():
@@ -63,8 +64,8 @@ def account_create(cpf):
     global account_num
     for new_account in users:
         if cpf in new_account.keys():
-            account = {"account": {"Agency": "0001", "account number": account_num}}
-            new_account.update(account)
+            account = {"Agency": "0001", "account number": account_num}
+            new_account[cpf]["Accounts"].append(account)
             account_num += 1
 
 print("\033[0;36m=============Bank===============\033[m")  
@@ -90,21 +91,19 @@ while True:
     if choose == 3:
         statement_display()
     if choose == 4:
-        start_4 = True
-        while start_4:
-            name = input("Write your name ")
-            birthdate = input("Tip you birthday [yyyy/mm/dd] ")
-            cpf = input("Tip your CPF ")
-            uservalid = create_user_validation(cpf)
-            if uservalid:
-                print(uservalid)
-                account_create(cpf)
-                print(users)
-            else:
-                street, num, district, city, state = input("Tip your address ").split('-')
-                user_create(name, birthdate,cpf, street, num, district,city, state)
-                account_create(cpf)
-                print(users)
+        name = input("Write your name ")
+        birthdate = input("Tip you birthday [yyyy/mm/dd] ")
+        cpf = input("Tip your CPF ")
+        uservalid = create_user_validation(cpf)
+        if uservalid:
+            print(uservalid)
+            account_create(cpf)
+            print(users)
+        else:
+            street, num, district, city, state = input("Tip your address: [street - number - distric - city - state] ").split('-')
+            user_create(name, birthdate,cpf, street, num, district,city, state)
+            account_create(cpf)
+            print(users)
     if choose == 5:
         for i in users:
             print(i)
