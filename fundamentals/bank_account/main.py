@@ -67,6 +67,8 @@ def account_create(cpf):
             account = {"Agency": "0001", "account number": account_num}
             new_account[cpf]["Accounts"].append(account)
             account_num += 1
+        else:
+            return False
 
 print("\033[0;36m=============Bank===============\033[m")  
 while True:
@@ -92,7 +94,7 @@ while True:
         statement_display()
     if choose == 4:
         name = input("Write your name ")
-        birthdate = input("Tip you birthday [yyyy/mm/dd] ")
+        birthdate = input("Tip you birth date [yyyy/mm/dd] ")
         cpf = input("Tip your CPF ")
         uservalid = create_user_validation(cpf)
         if uservalid:
@@ -100,7 +102,7 @@ while True:
             account_create(cpf)
             print(users)
         else:
-            street, num, district, city, state = input("Tip your address: [street - number - distric - city - state] ").split('-')
+            street, num, district, city, state = input("Tip your address: [street - number - district - city - state] ").split('-')
             user_create(name, birthdate,cpf, street, num, district,city, state)
             account_create(cpf)
             print(users)
@@ -109,9 +111,13 @@ while True:
             print(i)
     if choose == 6:
         cpf = input("Tip your CPF ")
-        account_create(cpf)
-        print("Bounding you new account to your cpf....")
-        sleep(2)
+        create = account_create(cpf)
+        if not create:
+            print("Create your profile before create an account")
+        else:
+            print("Bounding you new account to your cpf....")
+            sleep(2)
+            print("Done")
         for user in users:
             print(user)
 
