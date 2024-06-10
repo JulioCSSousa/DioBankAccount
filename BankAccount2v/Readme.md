@@ -1,0 +1,1 @@
+Este projeto simula um banco financeiro via termina. Possui algumas funcinalidades básicas como depositar, sacar, criar um novo cliente e conta, também exibindo extrato bancário.
